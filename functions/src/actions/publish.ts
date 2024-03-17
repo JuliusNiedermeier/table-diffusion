@@ -8,6 +8,8 @@ import {
 
 import { isAxiosError } from "axios";
 
+import * as logger from "firebase-functions/logger";
+
 const facebookGraphAPILongLivedPageAccessToken =
   "EAANBhcxC2zEBOw7BLgcwmJZAaKtf1qXx13C3YpAWdCMQ6JWlP2CnGGOm0ursrzeOzS8YW1qtoLLaCEISu0jKVNlpwZBL8jSq04L3SgMq4X14kVNIVXh8c4VBkAmdlKQkwW55zvSs5nYkpFToX1HyWmOzSrnDgXcvj8ZCw6XHsMhGeKDVZBwE1ar5fPILfJZBSVMGOtiwZD";
 
@@ -24,12 +26,16 @@ const withErrorHandling = async <Result>(callback: () => Result) => {
     return await callback();
   } catch (error) {
     if (isAxiosError(error)) {
-      console.error({ message: error.message, data: error.response?.data });
+      logger.error("Axios error", {
+        message: error.message,
+        data: error.response?.data,
+      });
     } else if (error instanceof Error) {
-      console.error(error.name, error.message);
+      logger.error("Error", error);
     } else {
-      console.error("An unknown error occured");
+      console.error("Unknown error", error);
     }
+    return null;
   }
 };
 
