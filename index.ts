@@ -11,6 +11,7 @@ import {
 import { initializeApp, cert } from "firebase-admin/app";
 import { getStorage } from "firebase-admin/storage";
 import { createHash } from "crypto";
+import { generateImagePrompt } from "./actions/generate-image-prompt";
 
 const app = initializeApp({ credential: cert("./service-account.json") });
 const storage = getStorage(app);
@@ -19,9 +20,15 @@ const bucket = storage.bucket("table-diffusion.appspot.com");
 const post = async () => {
   log(`========== Execution start ${new Date().toUTCString()} ==========`);
 
+  // Image prompt generation ===============================================
+  log("Generating image prompt");
+  const imagePrompt = await generateImagePrompt();
+  if (!imagePrompt) return log("Image promt generation failed");
+  log(`Image promt created [${imagePrompt}]`);
+
   // Image generation ======================================================
   log("Generating image");
-  const imageURL = await generateImage();
+  const imageURL = await generateImage(imagePrompt);
   if (!imageURL) return log("Image creation failed");
   log(`Image created [${imageURL}]`);
 

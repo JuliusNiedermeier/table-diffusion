@@ -9,9 +9,9 @@ const modelName =
 const imagePrompt =
   "A beatifully designed wooden table in a modern living room. The focus is on the wooden table. It is made from a dark luxurious looking premium wood.";
 
-export const generateImage = async () => {
+export const generateImage = async (prompt: string) => {
   const [imageURL] = (await replicate.run(modelName, {
-    input: { prompt: imagePrompt },
+    input: { prompt },
   })) as [string];
 
   return imageURL || null;
